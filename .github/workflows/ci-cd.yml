@@ -1,0 +1,40 @@
+name: Secure Flask CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install bandit pylint
+
+    - name: Run Bandit (static security analysis)
+      run: bandit -r . || exit 1
+
+    - name: Run Pylint (code quality)
+      run: pylint app.py || exit 1
+
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: |
+        curl https://cli-assets.heroku.com/install.sh | sh
+        heroku git:remote -a your-heroku-app-name
+        git push heroku main

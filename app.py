@@ -11,13 +11,11 @@ from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import re
-import secrets
-
-
+import os
 
 # App initialization
 app = Flask(__name__)
-app.config['SECRET_KEY'] = secrets.token_hex(32)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///taskmanager.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

@@ -39,5 +39,5 @@ jobs:
         curl https://cli-assets.heroku.com/install.sh | sh
         export PATH=$PATH:/app/.heroku/bin
         heroku auth:token
-        heroku git:remote -a taskly
+        heroku git:remote -a Taskly
         git push heroku HEAD:main --force

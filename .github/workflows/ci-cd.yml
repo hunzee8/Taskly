@@ -29,12 +29,15 @@ jobs:
       run: bandit -r . || exit 1
 
     - name: Run Pylint (code quality)
-      run: pylint app.py || exit 1
+      run: pylint --rcfile=.pylintrc app.py || exit 1
+
 
     - name: Deploy to Heroku
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
         curl https://cli-assets.heroku.com/install.sh | sh
+        export PATH=$PATH:/app/.heroku/bin
+        heroku auth:token
         heroku git:remote -a taskly
-        git push heroku main
+        git push heroku HEAD:main --force

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Task - Secure Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="mb-4 text-center">Edit Task</h3>
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label fw-bold") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Task title") }}
+                        {% for error in form.title.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), placeholder="Task description") }}
+                        {% for error in form.description.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.status.label(class="form-label fw-bold") }}
+                            {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                            {% for error in form.status.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.priority.label(class="form-label fw-bold") }}
+                            {{ form.priority(class="form-select" + (" is-invalid" if form.priority.errors else "")) }}
+                            {% for error in form.priority.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.start_date.label(class="form-label fw-bold") }}
+                            {{ form.start_date(class="form-control", type="date") }}
+                            {% for error in form.start_date.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.due_date.label(class="form-label fw-bold") }}
+                            {{ form.due_date(class="form-control", type="date") }}
+                            {% for error in form.due_date.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        {{ form.submit(class="btn btn-primary fw-bold") }}
+                        <a href="{{ url_for('tasks') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

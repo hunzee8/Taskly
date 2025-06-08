@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Secure Task Manager{% endblock %}
+
+{% block content %}
+<section class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Welcome to <strong>Secure Task Manager</strong></h1>
+        <p class="lead">A secure and organized way to manage your daily tasks efficiently.</p>
+        
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('tasks') }}" class="btn btn-primary btn-lg mt-3" role="button" aria-label="Go to task dashboard">
+                Go to Tasks
+            </a>
+        {% else %}
+            <div class="d-grid gap-2 d-md-block mt-3">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-2" role="button" aria-label="Login to your account">
+                     Login
+                </a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg" role="button" aria-label="Register a new account">
+                     Register
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

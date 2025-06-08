@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Your Tasks - Secure Task Manager{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Your Tasks</h2>
+
+<!-- Toggle Button for Add Task Form -->
+<button class="btn btn-primary fw-bold mb-3 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#addTaskForm" aria-expanded="{% if not tasks %}true{% else %}false{% endif %}" aria-controls="addTaskForm">
+    <img src="{{ url_for('static', filename='icons/add-icon.png') }}" alt="Add" width="20" height="20" class="me-2">
+    Add New Task
+</button>
+
+<!-- Task Add Form (Collapsible) -->
+<div class="collapse {% if not tasks %}show{% endif %}" id="addTaskForm">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Add a New Task</h5>
+            <form method="POST" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label fw-bold") }}
+                    {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Task title") }}
+                    {% for error in form.title.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label fw-bold") }}
+                    {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), placeholder="Task description") }}
+                    {% for error in form.description.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.status.label(class="form-label fw-bold") }}
+                        {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                        {% for error in form.status.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.priority.label(class="form-label fw-bold") }}
+                        {{ form.priority(class="form-select" + (" is-invalid" if form.priority.errors else "")) }}
+                        {% for error in form.priority.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.start_date.label(class="form-label fw-bold") }}
+                        {{ form.start_date(class="form-control", type="date") }}
+                        {% for error in form.start_date.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.due_date.label(class="form-label fw-bold") }}
+                        {{ form.due_date(class="form-control", type="date") }}
+                        {% for error in form.due_date.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary fw-bold d-flex align-items-center justify-content-center">
+                    <img src="{{ url_for('static', filename='icons/add-icon.png') }}" alt="Add" width="20" height="20" class="me-2">
+                    Add Task
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<!-- Tasks List -->
+{% if tasks %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for task in tasks %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ task.title | e }}</h5>
+                <p class="card-text text-muted">{{ task.description | e or 'No description' }}</p>
+                <p class="mb-2">
+                    <span class="badge bg-info text-dark">Status: {{ task.status | e }}</span>
+                    <span class="badge 
+                        {% if task.priority == 'High' %}bg-danger
+                        {% elif task.priority == 'Medium' %}bg-warning text-dark
+                        {% else %}bg-secondary{% endif %}">
+                        Priority: {{ task.priority | e }}
+                    </span>
+                </p>
+                <p class="text-muted small mb-0">
+                    Start: {{ task.start_date.strftime('%Y-%m-%d') if task.start_date else 'N/A' }}<br>
+                    Due: {{ task.due_date.strftime('%Y-%m-%d') if task.due_date else 'N/A' }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center">
+                    <img src="{{ url_for('static', filename='icons/edit-icon.png') }}" alt="Edit" width="16" height="16" class="me-1">
+                    Edit
+                </a>
+
+                <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}" onsubmit="return confirm('Are you sure you want to delete this task?');" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center">
+                        <img src="{{ url_for('static', filename='icons/delete-icon.png') }}" alt="Delete" width="16" height="16" class="me-1">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted text-center mt-4">You have no tasks yet. Add one above!</p>
+{% endif %}
+{% endblock %}

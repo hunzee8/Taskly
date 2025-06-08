@@ -36,5 +36,5 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
         curl https://cli-assets.heroku.com/install.sh | sh
-        heroku git:remote -a your-heroku-app-name
+        heroku git:remote -a taskly
         git push heroku main

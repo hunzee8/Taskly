@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form Handling
     // ======================
     document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function() {
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
                 // Visual feedback during submission

@@ -20,7 +20,9 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+# app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-me')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///taskmanager.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -265,5 +267,5 @@ def inject_now():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true") #comment this line when running locally
+    app.run(debug=os.getenv("FLASK_DEBUG", "true").lower() == "true") #comment this line when running locally
     # app.run(debug=True) #comment out this line when running locally

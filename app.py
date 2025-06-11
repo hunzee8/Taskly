@@ -40,11 +40,30 @@ limiter = Limiter(
 )
 limiter.init_app(app)
 
-Talisman(app, content_security_policy={
-    'default-src': ["'self'"],
-    'style-src': ["'self'", "https://cdn.jsdelivr.net"],
-    'script-src': ["'self'", "https://cdn.jsdelivr.net"]
-})
+SELF = "'self'"
+CDN = "https://cdn.jsdelivr.net"
+
+csp = {
+    'default-src': [SELF],
+    'script-src': [SELF, CDN],
+    'style-src': [SELF, CDN],
+    'font-src': [SELF, CDN],
+    'img-src': [SELF, 'data:'],  # allow embedded base64 images
+    'object-src': ["'none'"],     # disallow Flash, etc.
+    'frame-ancestors': [SELF],    # mitigate clickjacking
+}
+
+Talisman(
+    app,
+    content_security_policy=csp,
+    content_security_policy_nonce_in=['script-src'],
+    frame_options='DENY',
+    strict_transport_security=True,
+    referrer_policy='no-referrer',
+    x_xss_protection=True,
+    x_content_type_options=True,
+    force_https=True
+)
 
 def is_safe_url(target):
     """Ensure the target URL is safe for redirects (same host)."""
@@ -278,3 +297,4 @@ if __name__ == '__main__':
         db.create_all()
     app.run(debug=os.getenv("FLASK_DEBUG", "true").lower() == "true") #comment this line when running locally
     # app.run(debug=True) #comment out this line when running locally
+

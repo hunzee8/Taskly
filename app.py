@@ -18,6 +18,7 @@ from markupsafe import escape
 from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from urllib.parse import urlparse, urljoin
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -45,6 +46,10 @@ Talisman(app, content_security_policy={
     'script-src': ["'self'", "https://cdn.jsdelivr.net"]
 })
 
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 class User(db.Model, UserMixin):
     """Model for application users."""
@@ -162,7 +167,9 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('tasks'))
+            if next_page and is_safe_url(next_page):
+                return redirect(next_page)
+            return redirect(url_for('tasks'))
         flash('Invalid username or password.', 'danger')
     return render_template('login.html', form=form)
 

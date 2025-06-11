@@ -6,6 +6,7 @@ Implements secure coding practices, CSRF protection, and rate limiting.
 
 import os
 import re
+from urllib.parse import urlparse, urljoin
 from datetime import datetime, date, timezone
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_sqlalchemy import SQLAlchemy
@@ -18,7 +19,6 @@ from markupsafe import escape
 from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from urllib.parse import urlparse, urljoin
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')

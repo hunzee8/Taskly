@@ -47,9 +47,11 @@ Talisman(app, content_security_policy={
 })
 
 def is_safe_url(target):
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+    """Ensure the target URL is safe for redirects (same host)."""
+    host_url = urlparse(request.host_url)
+    redirect_url = urlparse(urljoin(request.host_url, target))
+    return redirect_url.scheme in ('http', 'https') and host_url.netloc == redirect_url.netloc
+
 
 class User(db.Model, UserMixin):
     """Model for application users."""
